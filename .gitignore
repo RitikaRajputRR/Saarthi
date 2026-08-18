@@ -1,0 +1,22 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
