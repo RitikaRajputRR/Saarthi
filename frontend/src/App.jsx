@@ -19,9 +19,6 @@ function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [history, setHistory] = useState([]);
-
-  // IMPORTANT:
-  // Current open chat ka ID
   const [activeChatId, setActiveChatId] = useState(null);
 
   // ==========================================
@@ -81,7 +78,6 @@ function App() {
 
     if (!firstUserMessage) return;
 
-    // Current chat ka ID nahi hai to naya ID create karo
     const chatId = activeChatId || Date.now();
 
     if (!activeChatId) {
@@ -106,10 +102,6 @@ function App() {
 
       let updated;
 
-      // ========================================
-      // EXISTING CHAT UPDATE
-      // ========================================
-
       if (existingChatIndex !== -1) {
         updated = [...prev];
 
@@ -118,13 +110,7 @@ function App() {
           title: chat.title,
           messages: chat.messages,
         };
-      }
-
-      // ========================================
-      // NEW CHAT
-      // ========================================
-
-      else {
+      } else {
         updated = [chat, ...prev];
       }
 
@@ -215,8 +201,6 @@ function App() {
     setSelectedFile(null);
     setSelectedFileUrl(null);
 
-    // IMPORTANT:
-    // Next message ke liye completely new chat
     setActiveChatId(null);
 
     if (fileInputRef.current) {
@@ -224,39 +208,40 @@ function App() {
     }
   };
 
- // ==========================================
-// CLEAR ALL CHAT HISTORY
-// ==========================================
+  // ==========================================
+  // CLEAR ALL CHAT HISTORY
+  // ==========================================
 
-const clearAllHistory = () => {
-  if (history.length === 0) return;
+  const clearAllHistory = () => {
+    if (history.length === 0) return;
 
-  Swal.fire({
-    title: "Clear chat history?",
-    text: "All chats will be removed.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Clear",
-    cancelButtonText: "Cancel",
-    reverseButtons: true,
-    width: "320px",
-    padding: "1rem",
-    customClass: {
-      popup: "small-swal-popup",
-    },
-  }).then((result) => {
-    if (!result.isConfirmed) return;
+    Swal.fire({
+      title: "Clear chat history?",
+      text: "All chats will be removed.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Clear",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      width: "320px",
+      padding: "1rem",
+      customClass: {
+        popup: "small-swal-popup",
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) return;
 
-    setHistory([]);
-    setMessages([]);
-    setActiveChatId(null);
+      setHistory([]);
+      setMessages([]);
+      setActiveChatId(null);
 
-    localStorage.removeItem("saarthi-chat-history");
+      localStorage.removeItem("saarthi-chat-history");
 
-    window.speechSynthesis.cancel();
-    setSpeakingIndex(null);
-  });
-};
+      window.speechSynthesis.cancel();
+      setSpeakingIndex(null);
+    });
+  };
+
   // ==========================================
   // LOAD OLD CHAT
   // ==========================================
@@ -265,8 +250,6 @@ const clearAllHistory = () => {
     window.speechSynthesis.cancel();
     setSpeakingIndex(null);
 
-    // IMPORTANT:
-    // Jo chat click kiya hai uska ID active karo
     setActiveChatId(chat.id);
 
     setMessages(chat.messages || []);
@@ -294,7 +277,6 @@ const clearAllHistory = () => {
       JSON.stringify(updated)
     );
 
-    // Agar currently opened chat delete hui
     if (activeChatId === id) {
       setActiveChatId(null);
       setMessages([]);
@@ -509,12 +491,6 @@ const clearAllHistory = () => {
     const userMessage = message.trim();
     const fileToSend = selectedFile;
 
-    // ========================================
-    // IMPORTANT:
-    // Agar ye new chat hai to ID send hone se
-    // pehle create kar do
-    // ========================================
-
     if (!activeChatId) {
       setActiveChatId(Date.now());
     }
@@ -608,11 +584,11 @@ const clearAllHistory = () => {
       }
 
       // ======================================
-      // BACKEND
+      // PRODUCTION BACKEND
       // ======================================
 
       const response = await fetch(
-        "http://127.0.0.1:5000/chat",
+        "https://saarthi-1-7cur.onrender.com/chat",
         {
           method: "POST",
           body: formData,
@@ -835,9 +811,7 @@ const clearAllHistory = () => {
   return (
     <div className="chat-app">
 
-      {/* ======================================
-          SIDEBAR
-      ====================================== */}
+      {/* SIDEBAR */}
 
       <aside
         className={`sidebar ${
@@ -846,8 +820,6 @@ const clearAllHistory = () => {
             : "sidebar-closed"
         }`}
       >
-
-        {/* SIDEBAR TOP */}
 
         <div className="sidebar-top">
 
@@ -969,9 +941,7 @@ const clearAllHistory = () => {
 
       </aside>
 
-      {/* ======================================
-          MAIN CHAT
-      ====================================== */}
+      {/* MAIN CHAT */}
 
       <div className="chat-main">
 
@@ -1423,9 +1393,7 @@ const clearAllHistory = () => {
 
       </div>
 
-      {/* ======================================
-          FLOATING STOP READING
-      ====================================== */}
+      {/* FLOATING STOP READING */}
 
       {speakingIndex !== null && (
 
